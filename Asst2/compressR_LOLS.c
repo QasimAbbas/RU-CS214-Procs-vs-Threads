@@ -9,8 +9,7 @@
 #include <sys/wait.h>
 
 char * fileName;
-int argc;
-char *argv[];
+
 //struct for holding arguments for compressToFile
 
 void compressR_LOLS(char *FileName, char* parts){
@@ -22,15 +21,16 @@ void compressR_LOLS(char *FileName, char* parts){
 	int docLength;		//character length of file
 
 	char * input;		//uncompressed string
-
+	
 	int segSize;		//size of uncompressed string segments
 	//get comand line args
-	if (parts == 3){
+	int in = atoi(parts);
+	if (in == 3){
 		fileName = FileName;
 		childCount = atoi(parts);
 	}else{
 		printf("ERROR not enough arguments\n");
-		return 0;
+		return;
 	}
 
 	/*get uncompressed string from file*/
@@ -39,7 +39,8 @@ void compressR_LOLS(char *FileName, char* parts){
 	docLength = get_file_length(file);
 
 	input = (char*)malloc(docLength);
-
+	input = inputFormatter(input);
+	
 	fgets(input, docLength + 1, file);
 
 	fclose(file);
@@ -52,10 +53,18 @@ void compressR_LOLS(char *FileName, char* parts){
 	int i;
 	
 	//Creating child process
+	int modulo;
 	for(i = 0; i < childCount; i++){
 		pid_t child_pid = fork();
 		
-		segSize = floor(docLength/childCount);
+		modulo = docLength%childCount;
+		
+		if(i == 0){
+			segSize = (docLength/childCount) + modulo;
+		}else{
+			segSize = (docLength/childCount);
+		}
+		
 		
 		//Configuring Arguments for Child Processes
 	    char *argPassing[5];
@@ -66,6 +75,7 @@ void compressR_LOLS(char *FileName, char* parts){
 		char *str3 = malloc(sizeof(char*));
 		
 		sprintf(str1, "%d", segSize);
+		printf("SEGSIZE: ");
 		argPassing[1] = str1;
 		sprintf(str2, "%d", place);
 		argPassing[2] = str2;
@@ -103,13 +113,13 @@ void compressR_LOLS(char *FileName, char* parts){
 	}
 
 	printf("process done\n");
-	return 0;
+	
 
 }
 
 
 int main(int argc, char *argv[]){
-	compressT_LOLS(argv[1], argv[2]);
+	compressR_LOLS(argv[1], argv[2]);
 }
 
 int get_file_length( FILE *file ) {

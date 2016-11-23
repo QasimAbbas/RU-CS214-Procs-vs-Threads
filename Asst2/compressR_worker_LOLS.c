@@ -46,7 +46,7 @@ void compressToFile(void* arguments){
 	FILE *file;
 	file = fopen(newFileName, "w+");
 	printf("File opened\n");
-	fprintf(file, encoded);
+	fputs(encoded ,file);
 	
 	//fprintf(file, "%s", encoded);
 

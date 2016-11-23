@@ -9,6 +9,21 @@
 
 char * fileName;
 
+void RemoveSpaces(char* source)
+{
+	printf("THIS RUNSssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss\n");
+  char* i = source;
+  char* j = source;
+  while(*j != 0)
+  {
+    *i = *j++;
+    if(*i != ' ')
+      i++;
+  }
+  *i = 0;
+}
+
+
 //struct for holding arguments for compressToFile
 typedef struct args
 {
@@ -19,11 +34,11 @@ typedef struct args
 } args;
 
 //uses rle encoding on input string, then writes the code to a new file
-void compressToFile(void* arguments){
+void* compressToFile(void* arguments){
 	//retrieve and encode input
 
 	args* in = (args *) arguments;
-	
+	printf("Segment in arh %s\n", in->input);
 	char* segment = (char*)malloc(in->segSize + 1);
 
 	strncpy(segment, in->input + in->place, in->segSize);
@@ -53,7 +68,7 @@ void compressToFile(void* arguments){
 	FILE *file;
 	file = fopen(newFileName, "w+");
 	printf("File opened\n");
-	fprintf(file, encoded);
+	fputs(encoded ,file);
 
 	fclose(file);
 
@@ -63,8 +78,8 @@ void compressToFile(void* arguments){
 }
 
 void compressT_LOLS(char *fileName, int parts){
-		int threadCount;	//number of threads specified
-
+	int threadCount = parts;	//number of threads specified
+printf("THIS RUNSssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss\n");
 		//specified file name
 
 	FILE * file;		//file with uncompressed input
@@ -74,14 +89,6 @@ void compressT_LOLS(char *fileName, int parts){
 	char * input;		//uncompressed string
 
 	int segSize;		//size of uncompressed string segments
-	//get comand line args
-	if (argc == 3){
-		fileName = argv[1];
-		threadCount = atoi(argv[2]);
-	}else{
-		printf("ERROR not enough arguments\n");
-		return 0;
-	}
 
 	/*get uncompressed string from file*/
 	file = fopen(fileName, "r");
@@ -93,7 +100,8 @@ void compressT_LOLS(char *fileName, int parts){
 	fgets(input, docLength + 1, file);
 
 	fclose(file);
-
+	RemoveSpaces(input);
+	printf("THIS RUNSssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss\n");
 	printf("Input : %s\n", input);
 
 	/*create threads*/
@@ -103,13 +111,14 @@ void compressT_LOLS(char *fileName, int parts){
 	int modulo;
 	for(i = 0; i < threadCount; i++){
 		
-		modulo = docLength%threadCount
+		modulo = docLength%threadCount;
 		
 		if(i == 0){
 			segSize = (docLength/threadCount) + modulo;
 		}else{
-			segSize = (docLength/threadCount)
+			segSize = (docLength/threadCount);
 		}
+		
 		args* arguments =  (args*)malloc(sizeof(args));
 
 		arguments->input = input;
@@ -118,7 +127,7 @@ void compressT_LOLS(char *fileName, int parts){
 		arguments->iteration = i;
 
 		//make thread
-		pthread_create(&pth[i], NULL, compressToFile,arguments);
+		pthread_create(&pth[i], NULL, compressToFile,(void*)arguments);
 
 		place += segSize;
 	}
@@ -132,7 +141,7 @@ void compressT_LOLS(char *fileName, int parts){
 	}
 
 	printf("process done\n");
-	return 0;
+	return;
 
 }
 
@@ -187,7 +196,7 @@ int main(int argc, char *argv[]){
 		arguments->iteration = i;
 
 		//make thread
-		pthread_create(&pth[i], NULL, compressToFile,arguments);
+		pthread_create(&pth[i], NULL, compressToFile,(void*)arguments);
 
 		place += segSize;
 	}
@@ -220,7 +229,6 @@ int get_file_length( FILE *file ) {
 
     return length;
 }
-
 
 
 

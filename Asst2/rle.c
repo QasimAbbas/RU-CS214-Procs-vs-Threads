@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <ctype.h>
 
 typedef struct CharTag
 {
@@ -19,6 +20,7 @@ typedef struct CharTag
 } CharTag;
 
 char* encode (char* input){
+	//printf("input in encode: %s\n",input);
 	//size of the outputted string based on the input
 	int outputSize = 0;
 
@@ -33,7 +35,12 @@ char* encode (char* input){
 	int charCount = 0;
 	int i = 0;
 	while(i < strlen(input)){
-
+		
+		//check if char is a character
+		while(!isalpha(input[i]) || input[i] == ' '){
+			i++;
+		}
+		
 		if(input[i] == input[i + 1]){
 			charCount ++;
 		}else{
@@ -54,7 +61,7 @@ char* encode (char* input){
 		}
 		i++;
 	}
-	//last node has a zero amount to denot end of list
+	//last node has a zero amount to denote end of list
 	//tmp -> amount = 0;
 
 	//Take data from the LL and write it to an ouput string
@@ -139,7 +146,23 @@ char * filenameFormat(char *nameOfFile, char *type){
 }
 
 
-
-
-
+char * inputFormatter(char *input){
+	 char line[strlen(input)];
+	 strcpy(line, input);
+    int i, j;
+	
+	for(i = 0; line[i] != '\0'; ++i)
+    {
+        while (!( (line[i] >= 'a' && line[i] <= 'z') || (line[i] >= 'A' && line[i] <= 'Z') || line[i] == '\0') )
+        {
+            for(j = i; line[j] != '\0'; ++j)
+            {
+                line[j] = line[j+1];
+            }
+            line[j] = '\0';
+        }
+    }
+    strcpy(input, line);
+	return input;
+}
 
