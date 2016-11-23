@@ -57,6 +57,7 @@ void compressToFile(void* arguments){
 	return;
 }
 
+
 int main(int argc, char *argv[]){
 	
     printf("INSIDE THE WORKER\n");

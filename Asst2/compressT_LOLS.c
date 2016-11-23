@@ -62,6 +62,81 @@ void compressToFile(void* arguments){
 	return;
 }
 
+void compressT_LOLS(char *fileName, int parts){
+		int threadCount;	//number of threads specified
+
+		//specified file name
+
+	FILE * file;		//file with uncompressed input
+
+	int docLength;		//character length of file
+
+	char * input;		//uncompressed string
+
+	int segSize;		//size of uncompressed string segments
+	//get comand line args
+	if (argc == 3){
+		fileName = argv[1];
+		threadCount = atoi(argv[2]);
+	}else{
+		printf("ERROR not enough arguments\n");
+		return 0;
+	}
+
+	/*get uncompressed string from file*/
+	file = fopen(fileName, "r");
+
+	docLength = get_file_length(file);
+
+	input = (char*)malloc(docLength);
+
+	fgets(input, docLength + 1, file);
+
+	fclose(file);
+
+	printf("Input : %s\n", input);
+
+	/*create threads*/
+	pthread_t pth[threadCount];		//array of thread pointers
+	int place = 0; 					//used to save index where process leaves off/starts again
+	int i;
+	int modulo;
+	for(i = 0; i < threadCount; i++){
+		
+		modulo = docLength%threadCount
+		
+		if(i == 0){
+			segSize = (docLength/threadCount) + modulo;
+		}else{
+			segSize = (docLength/threadCount)
+		}
+		args* arguments =  (args*)malloc(sizeof(args));
+
+		arguments->input = input;
+		arguments->segSize = segSize;
+		arguments->place = place;
+		arguments->iteration = i;
+
+		//make thread
+		pthread_create(&pth[i], NULL, compressToFile,arguments);
+
+		place += segSize;
+	}
+
+	//wait for threads to finish
+    
+	printf("Waiting on process\n");
+
+	for(i = 0; i < threadCount; i++){
+		pthread_join(pth[i],NULL);
+	}
+
+	printf("process done\n");
+	return 0;
+
+}
+
+
 int main(int argc, char *argv[]){
 	
 	int threadCount;	//number of threads specified

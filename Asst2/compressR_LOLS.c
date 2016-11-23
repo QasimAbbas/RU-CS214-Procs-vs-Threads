@@ -9,10 +9,11 @@
 #include <sys/wait.h>
 
 char * fileName;
+int argc;
+char *argv[];
 //struct for holding arguments for compressToFile
 
-int main(int argc, char *argv[]){
-	
+void compressR_LOLS(char *FileName, char* parts){
 	int childCount;	//number of threads specified
 		//specified file name
 
@@ -24,9 +25,9 @@ int main(int argc, char *argv[]){
 
 	int segSize;		//size of uncompressed string segments
 	//get comand line args
-	if (argc == 3){
-		fileName = argv[1];
-		childCount = atoi(argv[2]);
+	if (parts == 3){
+		fileName = FileName;
+		childCount = atoi(parts);
 	}else{
 		printf("ERROR not enough arguments\n");
 		return 0;
@@ -104,6 +105,11 @@ int main(int argc, char *argv[]){
 	printf("process done\n");
 	return 0;
 
+}
+
+
+int main(int argc, char *argv[]){
+	compressT_LOLS(argv[1], argv[2]);
 }
 
 int get_file_length( FILE *file ) {
